@@ -31,7 +31,7 @@ public class TestNode {
 		InitTestTreeNodes(PackageHandler.getTestPath());
 		
         Runtime rt = Runtime.getRuntime();
-        Process pr = rt.exec("jdeps -verbose:class -filter:none " + PackageHandler.getTestPath());
+        Process pr = rt.exec("jdeps -J-Duser.language=en -verbose:class -filter:none " + PackageHandler.getTestPath());
         BufferedReader jDepsReader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
         
         String jDepsLine = null;
