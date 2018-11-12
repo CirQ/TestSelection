@@ -14,7 +14,7 @@ import utils.PackageHandler;
 public class ClassNode {
 	public static Map<String, ClassNode> instances = new HashMap<>();
 	
-	private Set<ClassNode> parents; // TODO: Test if set is needed
+	private Set<ClassNode> parents;
 	private String className;
 	private boolean needToRetest;
 	
@@ -25,7 +25,7 @@ public class ClassNode {
 	}
 	
 	public static void InitClassTree() throws IOException {
-		InitClassTreeNodes(PackageHandler.getClassPath());
+		InitClassTreeNodes(PackageHandler.getClassPath(), PackageHandler.getClassPackageName());
 		
         Process pr = Runtime.getRuntime().exec("jdeps -J-Duser.language=en -verbose:class -filter:none " + PackageHandler.getClassPath());
         BufferedReader jDepsReader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
@@ -38,9 +38,7 @@ public class ClassNode {
         	// Determine if a new classNode is being referenced
         	if (jDepsLine.startsWith(PackageHandler.getClassPackageName())) {
         		if (!jDepsLine.contains("$")) {
-            		String[] fullClassName = jDepsLine.split("\\.");
-            		String className = fullClassName[fullClassName.length - 1].split("\\s+")[0];
-            		
+            		String className = jDepsLine.split("\\s+")[0];
             		classNode = ClassNode.instances.get(className);
         		}
         		else {
@@ -48,36 +46,31 @@ public class ClassNode {
         		}
         	}
         	else if (classNode != null) {
-        		// TODO: Refactor to rename fullClassName separate from above. Extract Method.
-        		String fullClassNameStr = jDepsLine.split("\\s+")[1];
-        		if (fullClassNameStr.startsWith(PackageHandler.getClassPackageName()) && !fullClassNameStr.contains("$")) {
-            		String[] fullClassName = fullClassNameStr.split("\\.");
-            		String dependencyName = fullClassName[fullClassName.length - 1].split("\\s+")[0];
-            		
-            		// When a 'parent' class depends on a 'child' class 
+        		String dependencyName = jDepsLine.split("\\s+")[1];
+        		if (dependencyName.startsWith(PackageHandler.getClassPackageName()) && !dependencyName.contains("$")) {
+        			// When a 'parent' class depends on a 'child' class
             		// we add the 'parent' to the child's list of 'parents'
-            		
             		ClassNode.instances.get(dependencyName).addParent(classNode);
         		}
         	}
         }
 	}
 	
-	public static void InitClassTreeNodes(String directoryName) {
+	public static void InitClassTreeNodes(String directoryName, String packageName) {
 		File directory = new File(directoryName);
 		 
 		// get all the files from a directory
-        File[] allFiles = directory.listFiles();
-        for (File file: allFiles) {
+        for (File file: directory.listFiles()) {
             if (file.isFile()) {
                 String fileName = file.getName();
-                
                 if (fileName.endsWith(".class") && !fileName.contains("$")) {
-                	addClassNode(fileName.split("\\.")[0]);
+					String className = packageName + "." + fileName.split("\\.")[0];
+                	addClassNode(className);
                 }
             } 
             else if (file.isDirectory()) {
-            	InitClassTreeNodes(file.getAbsolutePath());
+            	String newPackageName = packageName + "." + file.getName();
+            	InitClassTreeNodes(file.getAbsolutePath(), newPackageName);
             }
         }
 	}

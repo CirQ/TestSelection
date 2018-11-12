@@ -36,7 +36,7 @@ public class TestMediator {
         return excludedTests;
 	}
 
-	public static void initDependencyTrees() throws IOException {
+	public static void buildDependencyTrees() throws IOException {
 		// Compute Class and Test Dependency Trees
 		PackageHandler.initialize(rootPath, classPackageName, testPackageName);
 		ClassNode.InitClassTree();

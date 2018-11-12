@@ -1,11 +1,6 @@
 
 import java.io.*;
-import java.security.NoSuchAlgorithmException;
 
-import dependencyTrees.ClassNode;
-import dependencyTrees.TestNode;
-import utils.CheckSumHandler;
-import utils.PackageHandler;
 import utils.TestMediator;
 
 
@@ -17,18 +12,19 @@ import utils.TestMediator;
  * as a surefire plugin.
  */
 public class Main {
-    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
+    public static void main(String[] args) throws IOException {
         // Start Execution Timer
         long start = System.nanoTime();
         
         // Init Dependency Trees
-        TestMediator.initDependencyTrees();
+        TestMediator.buildDependencyTrees();
         
         // Construct Regression Test String
         StringBuilder builder = new StringBuilder();
         builder.append("mvn test -DfailIfNoTests=false -Dtest=");
         for(String selectedTest: TestMediator.getSelectedTests()){
-            builder.append(selectedTest + ",");
+            builder.append(selectedTest);
+            builder.append(",");
         }
         builder.deleteCharAt(builder.length() - 1);
         
@@ -40,7 +36,5 @@ public class Main {
         double seconds = (double)duration / 1000000000.0;
         System.out.println("\nRegression test selection time: " + seconds + "seconds.");
     }
-
-
 }
 

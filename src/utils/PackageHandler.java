@@ -19,10 +19,6 @@ public class PackageHandler {
 		singleton.testPath = rootPath + "/target/test-classes/" + testPackageName.replace(".", "/");
 		singleton.classPackageName = classPackageName.trim();
 		singleton.testPackageName = testPackageName.trim();
-
-		System.out.println(singleton.classPath);
-		System.out.println(singleton.testPath);
-
 	}
 	
 	public static String getRootPath() {

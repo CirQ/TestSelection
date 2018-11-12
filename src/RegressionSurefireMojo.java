@@ -15,26 +15,24 @@ import utils.TestMediator;
 @Mojo(name="TestSelection", defaultPhase=LifecyclePhase.TEST, threadSafe=true, requiresDependencyResolution=ResolutionScope.TEST)
 public class RegressionSurefireMojo extends SurefirePlugin {
 
-    @Parameter (property = "args")
-    private String[] args;
+    @Parameter(property="args")
+    private String[] args = null;
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
 		System.out.println("\n\nStarting RTS");
         try {
-
             TestMediator.setParameters(args);
-			TestMediator.initDependencyTrees();
+			TestMediator.buildDependencyTrees();
 			
 			List<String> excludedTests = TestMediator.getExcludedTests();
-			if (null != getExcludes()) {
+			if (getExcludes() != null) {
 				excludedTests.addAll(getExcludes());
 			}
 		 	setExcludes(excludedTests);
 		 	
 			super.execute();
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
