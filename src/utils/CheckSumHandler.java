@@ -9,23 +9,20 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-/**
- * Created by HL on 4/18/17.
- */
 public class CheckSumHandler {
 
-	private String checkSumFileName;
+    private String checkSumFileName;
     private HashMap<String, String> oldMap;
     private HashMap<String, String> newMap;
     private HashSet<String> dangerousClass;
 
     public CheckSumHandler(String checkSumFileName) {
-    	this.checkSumFileName = checkSumFileName;
-    	this.oldMap = new HashMap<>();
-    	this.newMap = new HashMap<>();
-    	this.dangerousClass = new HashSet<>();
+        this.checkSumFileName = checkSumFileName;
+        this.oldMap = new HashMap<>();
+        this.newMap = new HashMap<>();
+        this.dangerousClass = new HashSet<>();
     }
-    
+
     public void doChecksum(String directoryName) throws IOException {
         readChecksums();
         updateChecksums(directoryName);

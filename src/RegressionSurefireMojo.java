@@ -18,23 +18,23 @@ public class RegressionSurefireMojo extends SurefirePlugin {
     @Parameter(property="args")
     private String[] args = null;
 
-	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
 
-		System.out.println("\n\nStarting RTS");
+        System.out.println("\n\nStarting RTS");
         try {
             TestMediator.setParameters(args);
-			TestMediator.buildDependencyTrees();
-			
-			List<String> excludedTests = TestMediator.getExcludedTests();
-			if (getExcludes() != null) {
-				excludedTests.addAll(getExcludes());
-			}
-		 	setExcludes(excludedTests);
-		 	
-			super.execute();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+            TestMediator.buildDependencyTrees();
+
+            List<String> excludedTests = TestMediator.getExcludedTests();
+            if (getExcludes() != null) {
+                excludedTests.addAll(getExcludes());
+            }
+            setExcludes(excludedTests);
+
+            super.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

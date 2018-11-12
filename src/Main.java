@@ -1,8 +1,6 @@
-
 import java.io.*;
 
 import utils.TestMediator;
-
 
 /**
  * Created by HL on 4/11/17.
@@ -33,8 +31,7 @@ public class Main {
 
         // Print Exection Time
         long duration = System.nanoTime() - start;
-        double seconds = (double)duration / 1000000000.0;
+        double seconds = (double)duration / 1e9;
         System.out.println("\nRegression test selection time: " + seconds + "seconds.");
     }
 }
-
