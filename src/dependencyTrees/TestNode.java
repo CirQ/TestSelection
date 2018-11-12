@@ -21,8 +21,8 @@ public class TestNode {
 	private boolean needToRetest;
 	
 	private TestNode(String className) {
-		this.parents = new HashSet<TestNode>();
-		this.dependencies = new HashSet<ClassNode>();
+		this.parents = new HashSet<>();
+		this.dependencies = new HashSet<>();
 		this.className = className;
 		this.needToRetest = false;
 	}
@@ -81,7 +81,7 @@ public class TestNode {
 		 
 		// get all the files from a directory
         File[] allFiles = directory.listFiles();
-        for (File file : allFiles) {
+        for (File file: allFiles) {
             if (file.isFile()) {
                 String fileName = file.getName();
                 

@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -13,7 +12,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import utils.TestMediator;
 
-@Mojo(name = "TestSelection", defaultPhase = LifecyclePhase.TEST, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name="TestSelection", defaultPhase=LifecyclePhase.TEST, threadSafe=true, requiresDependencyResolution=ResolutionScope.TEST)
 public class RegressionSurefireMojo extends SurefirePlugin {
 
     @Parameter (property = "args")
@@ -36,8 +35,7 @@ public class RegressionSurefireMojo extends SurefirePlugin {
 		 	
 			super.execute();
 			
-		} catch (NoSuchAlgorithmException | IOException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

@@ -1,7 +1,6 @@
 package utils;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +17,8 @@ public class TestMediator {
     public static String classPackageName;
     public static String testPackageName;
     
-	public static List<String> getSelectedTests() throws IOException, NoSuchAlgorithmException {
-		List<String> selectedTests = new ArrayList<String>();
+	public static List<String> getSelectedTests() {
+		List<String> selectedTests = new ArrayList<>();
         for(TestNode instance: TestNode.instances.values()){
             if(instance.isNeedToRetest()){
             	selectedTests.add(instance.getClassName());
@@ -28,8 +27,8 @@ public class TestMediator {
         return selectedTests;
 	}
 	
-	public static List<String> getExcludedTests() throws IOException, NoSuchAlgorithmException {
-		List<String> excludedTests = new ArrayList<String>();
+	public static List<String> getExcludedTests() {
+		List<String> excludedTests = new ArrayList<>();
         for(TestNode instance: TestNode.instances.values()){
             if(!instance.isNeedToRetest()){
             	excludedTests.add(instance.getClassName());
@@ -38,7 +37,7 @@ public class TestMediator {
         return excludedTests;
 	}
 
-	public static void initDependencyTrees() throws IOException, NoSuchAlgorithmException {
+	public static void initDependencyTrees() throws IOException {
 		// Compute Class and Test Dependency Trees
 		PackageHandler.initialize(rootPath, classPackageName, testPackageName);
 		ClassNode.InitClassTree();
@@ -81,4 +80,5 @@ public class TestMediator {
 		classPackageName = args[1];
 		testPackageName = args[2];
 	}
+
 }

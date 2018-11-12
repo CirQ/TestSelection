@@ -28,7 +28,7 @@ public class ClassNode {
 		InitClassTreeNodes(PackageHandler.getClassPath());
 		
         Runtime rt = Runtime.getRuntime();
-        Process pr = rt.exec("jdeps -verbose:class -filter:none " + PackageHandler.getClassPath());
+        Process pr = rt.exec("jdeps -J-Duser.language=en -verbose:class -filter:none " + PackageHandler.getClassPath());
         BufferedReader jDepsReader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
         
         String jDepsLine = null;
@@ -69,7 +69,7 @@ public class ClassNode {
 		 
 		// get all the files from a directory
         File[] allFiles = directory.listFiles();
-        for (File file : allFiles) {
+        for (File file: allFiles) {
             if (file.isFile()) {
                 String fileName = file.getName();
                 

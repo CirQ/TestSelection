@@ -26,34 +26,57 @@ public class CheckSumHandler {
     	this.dangerousClass = new HashSet<>();
     }
     
-    public void doChecksum(String directoryName) throws IOException, NoSuchAlgorithmException {
-
+    public void doChecksum(String directoryName) throws IOException {
         readChecksums();
         updateChecksums(directoryName);
         writeChecksums();
     }
 
-    public void updateChecksums(String directoryName) throws NoSuchAlgorithmException, IOException {
+    private void readChecksums() throws IOException {
+        //Read file and generate HashMap
+        File checksumFile = new File(checkSumFileName);
+        if(!checksumFile.exists()){
+            checksumFile.createNewFile();
+        }
+        String targetFileStr = Files.readAllLines(checksumFile.toPath()).toString();
+
+        targetFileStr = targetFileStr.replaceAll("\\{", "").replaceAll("\\}", "").replaceAll("\\[","").replaceAll("\\]","");
+        String[] lines = targetFileStr.split(", ");
+        String[] amap;
+        for(String line: lines) {
+            amap = line.split("=");
+            if(amap.length > 1)
+                oldMap.put(amap[0], amap[1]);
+        }
+    }
+
+    private void updateChecksums(String directoryName) throws IOException {
         File directory = new File(directoryName);
 
         // get all the files from a directory
         File[] allFiles = directory.listFiles();
-        for (File file : allFiles) {
+        for (File file: allFiles) {
             if (file.isFile()) {
                 String fileName = file.getName();
                 if(fileName.endsWith(".class")){
 
                     byte[] bytecode = Files.readAllBytes(file.toPath());
 
-                    MessageDigest md = MessageDigest.getInstance("MD5");
+                    MessageDigest md = null;
+                    try {
+                        md = MessageDigest.getInstance("MD5");
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                        System.exit(-1);
+                    }
 
                     md.update(bytecode);
                     byte[] mdbytes = md.digest();
 
                     //convert the byte to hex format
-                    StringBuffer sb = new StringBuffer("");
-                    for (int i = 0; i < mdbytes.length; i++) {
-                        sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+                    StringBuffer sb = new StringBuffer();
+                    for(byte b: mdbytes){
+                        sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
                     }
 
                     // Store every new checksum into
@@ -73,31 +96,14 @@ public class CheckSumHandler {
         }
     }
 
-    public void readChecksums() throws IOException {
-        //Read file and generate HashMap
-        File checksumFile = new File(checkSumFileName);
-        if(!checksumFile.exists()){
-            checksumFile.createNewFile();
-        }
-        String targetFileStr = Files.readAllLines(checksumFile.toPath()).toString();
-
-        targetFileStr = targetFileStr.replaceAll("\\{", "").replaceAll("\\}", "").replaceAll("\\[","").replaceAll("\\]","");
-        String[] lines = targetFileStr.split(", ");
-        String[] amap;
-        for(String line: lines) {
-            amap = line.split("=");
-            if(amap.length > 1)
-                oldMap.put(amap[0], amap[1]);
-        }
-    }
-
-    public void writeChecksums() throws IOException{
+    private void writeChecksums() throws IOException {
         File file = new File(checkSumFileName);
         FileOutputStream fos = new FileOutputStream(file);
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
         bw.write(newMap.toString());
         bw.close();
     }
+
     public List<String> getDangerousClasses(){
         return new ArrayList<>(dangerousClass);
     }
