@@ -12,10 +12,6 @@ public class TestMediator {
     public static final String TEST_CHECKSUM_FILE = "testChecksum.txt";
     public static final String CLASS_CHECKSUM_FILE = "classChecksum.txt";
 
-    public static String rootPath;
-    public static String classPackageName;
-    public static String testPackageName;
-    
     public static List<String> getSelectedTests() {
         List<String> selectedTests = new ArrayList<>();
         for(TestNode instance: TestNode.instances.values()){
@@ -36,48 +32,42 @@ public class TestMediator {
         return excludedTests;
     }
 
-    public static void buildDependencyTrees() throws IOException {
+    public static void buildDependencyTrees(String rootPath, String classPackageName, String testPackageName) throws IOException {
         // Compute Class and Test Dependency Trees
         PackageHandler.initialize(rootPath, classPackageName, testPackageName);
         ClassNode.InitClassTree();
         TestNode.InitTestTree();
 
         // Compute Test checksums and mark associated nodes
-        CheckSumHandler testCheckSumHandler = new CheckSumHandler(TEST_CHECKSUM_FILE);
+        CheckSumHandler testCheckSumHandler = new CheckSumHandler(TEST_CHECKSUM_FILE, true);
         testCheckSumHandler.doChecksum(PackageHandler.getTestPath());
-        for (String dangerousTest : testCheckSumHandler.getDangerousClasses()) {
+        for (String dangerousTest: testCheckSumHandler.getDangerousClasses()) {
             TestNode.instances.get(dangerousTest).setNeedToRetest(true);
         }
 
         // Compute Class checksums and mark associated nodes
-        CheckSumHandler classCheckSumHandler = new CheckSumHandler(CLASS_CHECKSUM_FILE);
+        CheckSumHandler classCheckSumHandler = new CheckSumHandler(CLASS_CHECKSUM_FILE, false);
         classCheckSumHandler.doChecksum(PackageHandler.getClassPath());
-        for (String dangerousClass : classCheckSumHandler.getDangerousClasses()) {
+        for (String dangerousClass: classCheckSumHandler.getDangerousClasses()) {
             ClassNode.instances.get(dangerousClass).setNeedToRetest(true);
         }
 
         // Mark tests which depend on a dangerous class
-        for (TestNode instance : TestNode.instances.values()) {
+        for (TestNode instance: TestNode.instances.values()) {
             instance.checkIfNeedRetest();
         }
     }
 
     public static void printDependencyTrees() {
         System.out.println("Class Tree: ");
-        for (ClassNode node : ClassNode.instances.values()) {
+        for (ClassNode node: ClassNode.instances.values()) {
             System.out.println(node.toString());
         }
 
         System.out.println("Test Tree: ");
-        for (TestNode node : TestNode.instances.values()) {
+        for (TestNode node: TestNode.instances.values()) {
             System.out.println(node.toString());
         }
-    }
-
-    public static void setParameters(String[] args){
-        rootPath = args[0];
-        classPackageName = args[1];
-        testPackageName = args[2];
     }
 
 }

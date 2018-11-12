@@ -20,12 +20,11 @@ public class RegressionSurefireMojo extends SurefirePlugin {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-
-        System.out.println("\n\nStarting RTS");
         try {
-            TestMediator.setParameters(args);
-            TestMediator.buildDependencyTrees();
+//            Runtime.getRuntime().exec("mvn test-compile");
 
+            System.out.println("\n\nStarting RTS");
+            TestMediator.buildDependencyTrees(args[0], args[1], args[2]);
             List<String> excludedTests = TestMediator.getExcludedTests();
             if (getExcludes() != null) {
                 excludedTests.addAll(getExcludes());
