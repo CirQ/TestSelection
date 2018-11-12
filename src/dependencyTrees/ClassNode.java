@@ -12,14 +12,14 @@ import java.util.Set;
 import utils.PackageHandler;
 
 public class ClassNode {
-	public static Map<String, ClassNode> instances = new HashMap<String, ClassNode>();
+	public static Map<String, ClassNode> instances = new HashMap<>();
 	
 	private Set<ClassNode> parents; // TODO: Test if set is needed
 	private String className;
 	private boolean needToRetest;
 	
 	private ClassNode(String className) {
-		this.parents = new HashSet<ClassNode>();
+		this.parents = new HashSet<>();
 		this.className = className;
 		this.needToRetest = false;
 	}
@@ -27,8 +27,7 @@ public class ClassNode {
 	public static void InitClassTree() throws IOException {
 		InitClassTreeNodes(PackageHandler.getClassPath());
 		
-        Runtime rt = Runtime.getRuntime();
-        Process pr = rt.exec("jdeps -J-Duser.language=en -verbose:class -filter:none " + PackageHandler.getClassPath());
+        Process pr = Runtime.getRuntime().exec("jdeps -J-Duser.language=en -verbose:class -filter:none " + PackageHandler.getClassPath());
         BufferedReader jDepsReader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
         
         String jDepsLine = null;
@@ -48,7 +47,7 @@ public class ClassNode {
         			classNode = null;
         		}
         	}
-        	else if (null != classNode) {
+        	else if (classNode != null) {
         		// TODO: Refactor to rename fullClassName separate from above. Extract Method.
         		String fullClassNameStr = jDepsLine.split("\\s+")[1];
         		if (fullClassNameStr.startsWith(PackageHandler.getClassPackageName()) && !fullClassNameStr.contains("$")) {
@@ -65,7 +64,7 @@ public class ClassNode {
 	}
 	
 	public static void InitClassTreeNodes(String directoryName) {
-		 File directory = new File(directoryName);
+		File directory = new File(directoryName);
 		 
 		// get all the files from a directory
         File[] allFiles = directory.listFiles();
@@ -95,11 +94,9 @@ public class ClassNode {
 	@Override
 	public String toString() {
 		String desc = className + ": ";
-		
-		for (ClassNode parent : parents) {
+		for (ClassNode parent: parents) {
 			desc += parent.getClassName() + ", ";
 		}
-		
 		return desc;
 	}
 	
@@ -113,10 +110,9 @@ public class ClassNode {
 
 	public void setNeedToRetest(boolean needToRetest) {
 		// Only update if not already true and attempting to set true
-		if (!this.needToRetest && needToRetest) 
-		{ 
+		if (!this.needToRetest && needToRetest) {
 			this.needToRetest = true;
-			for (ClassNode parent : parents) {
+			for (ClassNode parent: parents) {
 				parent.setNeedToRetest(true);
 			}
 		}

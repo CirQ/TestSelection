@@ -7,7 +7,6 @@ import java.util.List;
 import dependencyTrees.ClassNode;
 import dependencyTrees.TestNode;
 
-// TODO: Singleton? Anti-Pattern?
 public class TestMediator {
 	
 	public static final String TEST_CHECKSUM_FILE = "testChecksum.txt";

@@ -13,7 +13,7 @@ import utils.PackageHandler;
 
 // Note: Consider Extract superclass from ClassNode
 public class TestNode {
-	public static Map<String, TestNode> instances = new HashMap<String, TestNode>();
+	public static Map<String, TestNode> instances = new HashMap<>();
 	
 	private Set<TestNode> parents; // TODO: Test if set is needed
 	private Set<ClassNode> dependencies; // TODO: Test if set is needed
@@ -30,8 +30,7 @@ public class TestNode {
 	public static void InitTestTree() throws IOException {
 		InitTestTreeNodes(PackageHandler.getTestPath());
 		
-        Runtime rt = Runtime.getRuntime();
-        Process pr = rt.exec("jdeps -J-Duser.language=en -verbose:class -filter:none " + PackageHandler.getTestPath());
+        Process pr = Runtime.getRuntime().exec("jdeps -J-Duser.language=en -verbose:class -filter:none " + PackageHandler.getTestPath());
         BufferedReader jDepsReader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
         
         String jDepsLine = null;
@@ -51,7 +50,7 @@ public class TestNode {
         			testNode = null;
         		}
         	}
-        	else if (null != testNode) {
+        	else if (testNode != null) {
         		// TODO: Refactor to rename fullClassName separate from above. Extract Method.
         		String fullClassNameStr = jDepsLine.split("\\s+")[1];
         		if (fullClassNameStr.startsWith(PackageHandler.getTestPackageName()) && !fullClassNameStr.contains("$")) {
