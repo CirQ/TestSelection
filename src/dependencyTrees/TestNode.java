@@ -37,19 +37,14 @@ public class TestNode {
             while ((jDepsLine = jDepsReader.readLine()) != null) {
                 jDepsLine = jDepsLine.trim();
 
-                // Determine if a new testNode is being referenced
+            // Determine if a new testNode is being referenced
             if (jDepsLine.startsWith(PackageHandler.getTestPackageName())) {
-                if (!jDepsLine.contains("$")) {
-                    String className = jDepsLine.split("\\s+")[0];
-                    testNode = TestNode.instances.get(className);
-                }
-                else {
-                    testNode = null;
-                }
+                String className = jDepsLine.split("\\s+")[0];
+                testNode = TestNode.instances.get(className);
             }
             else if (testNode != null) {
                 String dependencyName = jDepsLine.split("\\s+")[1];
-                if (dependencyName.startsWith(PackageHandler.getTestPackageName()) && !dependencyName.contains("$")) {
+                if (dependencyName.startsWith(PackageHandler.getTestPackageName())) {
                     if (jDepsLine.endsWith("not found")) {
                         // Determine if this is a class dependency or a test dependency
                         // Note: only class dependencies end with "not found"
@@ -65,18 +60,18 @@ public class TestNode {
         }
     }
 
-    public static void InitTestTreeNodes(String directoryName, String packageName) {
+    private static void InitTestTreeNodes(String directoryName, String packageName) {
          File directory = new File(directoryName);
 
         // get all the files from a directory
         for (File file: directory.listFiles()) {
             if (file.isFile()) {
                 String fileName = file.getName();
-                if (fileName.endsWith(".class") && !fileName.contains("$")) {
+                if (fileName.endsWith(".class")) {
                     String className = packageName + "." + fileName.split("\\.")[0];
                     addTestNode(className);
                 }
-            } 
+            }
             else if (file.isDirectory()) {
                 String newPackageName = packageName + "." + file.getName();
                 InitTestTreeNodes(file.getAbsolutePath(), newPackageName);
@@ -84,43 +79,43 @@ public class TestNode {
         }
     }
 
-    public static void addTestNode(String className) {
+    private static void addTestNode(String className) {
         TestNode node = new TestNode(className);
         TestNode.instances.put(className, node);
     }
 
-    public void addParent(TestNode parent) {
+    private void addParent(TestNode parent) {
         this.parents.add(parent);
     }
 
     public void checkIfNeedRetest(){
-        for(ClassNode dependency : dependencies){
+        for(ClassNode dependency: dependencies){
             if(dependency.isNeedToRetest()){
                 this.needToRetest = true;
 
-                // Use below to percolate class dependency
-                // changes up to parent test classes
-
-                //this.setNeedToRetest(true);
+                // percolate class dependency changes to parent test classes
+                // this.setNeedToRetest(true);
             }
         }
     }
 
     @Override
     public String toString() {
-        String desc = className + "\n: parents - ";
+        StringBuilder desc = new StringBuilder(className + ":\n");
 
-        for (TestNode parent : parents) {
-            desc += parent.getClassName() + ", ";
+        desc.append("  parents:\n");
+        for (TestNode parent: parents) {
+            String info = String.format("    -> %s\n", parent.getClassName());
+            desc.append(info);
         }
 
-        desc += "\n: dependencies - ";
-        for (ClassNode dependency : dependencies) {
-            desc += dependency.getClassName() + ", ";
+        desc.append("  dependecy:\n");
+        for (ClassNode parent: dependencies) {
+            String info = String.format("    -> %s\n", parent.getClassName());
+            desc.append(info);
         }
-        System.out.println("");
 
-        return desc;
+        return desc.toString();
     }
 
     public String getClassName() {
@@ -135,7 +130,7 @@ public class TestNode {
         // Only update if not already true and attempting to set true
         if (!this.needToRetest && needToRetest) {
             this.needToRetest = true;
-            for (TestNode parent : parents) {
+            for (TestNode parent: parents) {
                 parent.setNeedToRetest(true);
             }
         }

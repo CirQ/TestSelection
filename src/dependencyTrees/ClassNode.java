@@ -37,17 +37,12 @@ public class ClassNode {
 
             // Determine if a new classNode is being referenced
             if (jDepsLine.startsWith(PackageHandler.getClassPackageName())) {
-                if (!jDepsLine.contains("$")) {
-                    String className = jDepsLine.split("\\s+")[0];
-                    classNode = ClassNode.instances.get(className);
-                }
-                else {
-                    classNode = null;
-                }
+                String className = jDepsLine.split("\\s+")[0];
+                classNode = ClassNode.instances.get(className);
             }
             else if (classNode != null) {
                 String dependencyName = jDepsLine.split("\\s+")[1];
-                if (dependencyName.startsWith(PackageHandler.getClassPackageName()) && !dependencyName.contains("$")) {
+                if (dependencyName.startsWith(PackageHandler.getClassPackageName())) {
                     // When a 'parent' class depends on a 'child' class
                     // we add the 'parent' to the child's list of 'parents'
                     ClassNode.instances.get(dependencyName).addParent(classNode);
@@ -56,18 +51,18 @@ public class ClassNode {
         }
     }
 
-    public static void InitClassTreeNodes(String directoryName, String packageName) {
+    private static void InitClassTreeNodes(String directoryName, String packageName) {
         File directory = new File(directoryName);
 
         // get all the files from a directory
         for (File file: directory.listFiles()) {
             if (file.isFile()) {
                 String fileName = file.getName();
-                if (fileName.endsWith(".class") && !fileName.contains("$")) {
+                if (fileName.endsWith(".class")) {
                     String className = packageName + "." + fileName.split("\\.")[0];
                     addClassNode(className);
                 }
-            } 
+            }
             else if (file.isDirectory()) {
                 String newPackageName = packageName + "." + file.getName();
                 InitClassTreeNodes(file.getAbsolutePath(), newPackageName);
@@ -75,22 +70,24 @@ public class ClassNode {
         }
     }
 
-    public static void addClassNode(String className) {
+    private static void addClassNode(String className) {
         ClassNode node = new ClassNode(className);
         ClassNode.instances.put(className, node);
     }
 
-    public void addParent(ClassNode parent) {
+    private void addParent(ClassNode parent) {
         this.parents.add(parent);
     }
 
     @Override
     public String toString() {
-        String desc = className + ": ";
+        StringBuilder desc = new StringBuilder(className + ":\n");
+        desc.append("  parents:\n");
         for (ClassNode parent: parents) {
-            desc += parent.getClassName() + ", ";
+            String info = String.format("    -> %s\n", parent.getClassName());
+            desc.append(info);
         }
-        return desc;
+        return desc.toString();
     }
 
     public String getClassName() {

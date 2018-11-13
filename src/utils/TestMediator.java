@@ -61,12 +61,12 @@ public class TestMediator {
     public static void printDependencyTrees() {
         System.out.println("Class Tree: ");
         for (ClassNode node: ClassNode.instances.values()) {
-            System.out.println(node.toString());
+            System.out.println(node);
         }
 
         System.out.println("Test Tree: ");
         for (TestNode node: TestNode.instances.values()) {
-            System.out.println(node.toString());
+            System.out.println(node);
         }
     }
 

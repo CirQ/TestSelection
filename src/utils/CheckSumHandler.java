@@ -79,9 +79,9 @@ public class CheckSumHandler {
                     // Then check dangerous class
                     if(!oldMap.containsKey(fileName) || !oldMap.get(fileName).equals(hexChecksum)){
                         // When not contains this class or checksum changed, include the class
-                        int dollarIndex = fileName.indexOf("$");
-                        int index = dollarIndex==-1 ? fileName.indexOf('.') : dollarIndex;
+                        int index = fileName.indexOf(".class");
                         String className = packageName + "." + fileName.substring(0, index);
+                        LoggingHandler.debug("Found dangerous class (" + (isTest?"test":"class") + "): "+className);
                         dangerousClass.add(className);
                     }
                 }
