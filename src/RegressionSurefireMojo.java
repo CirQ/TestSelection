@@ -3,9 +3,7 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.surefire.SurefirePlugin;
-import org.apache.maven.plugin.surefire.log.PluginConsoleLogger;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -18,8 +16,12 @@ import utils.TestMediator;
 @Mojo(name="TestSelection", defaultPhase=LifecyclePhase.TEST, threadSafe=true, requiresDependencyResolution=ResolutionScope.TEST)
 public class RegressionSurefireMojo extends SurefirePlugin {
 
-    @Parameter(property="args")
-    private String[] args = null;
+    @Parameter
+    private String rootPath;
+    @Parameter
+    private String classPackageName;
+    @Parameter
+    private String testPackageName;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -33,7 +35,7 @@ public class RegressionSurefireMojo extends SurefirePlugin {
             LoggingHandler.info("----------------");
             LoggingHandler.info("");
 
-            TestMediator.buildDependencyTrees(args[0], args[1], args[2]);
+            TestMediator.buildDependencyTrees(rootPath, classPackageName, testPackageName);
             List<String> excludedTests = TestMediator.getExcludedTests();
             if (getExcludes() != null) {
                 excludedTests.addAll(getExcludes());
