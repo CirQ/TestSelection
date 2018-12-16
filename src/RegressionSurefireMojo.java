@@ -13,7 +13,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import utils.LoggingHandler;
 import utils.TestMediator;
 
-@Mojo(name="TestSelection", defaultPhase=LifecyclePhase.TEST, threadSafe=true, requiresDependencyResolution=ResolutionScope.TEST)
+@Mojo(name="main", defaultPhase=LifecyclePhase.TEST, threadSafe=true, requiresDependencyResolution=ResolutionScope.TEST)
 public class RegressionSurefireMojo extends SurefirePlugin {
 
     @Parameter
@@ -26,7 +26,6 @@ public class RegressionSurefireMojo extends SurefirePlugin {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
-//            Runtime.getRuntime().exec("mvn test-compile");
             LoggingHandler.initializeLogger(this.getLog());
 
             LoggingHandler.info("");
