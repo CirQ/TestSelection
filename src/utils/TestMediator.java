@@ -25,7 +25,7 @@ public class TestMediator {
     public static List<String> getExcludedTests() {
         List<String> excludedTests = new ArrayList<>();
         for(TestNode instance: TestNode.instances.values()){
-            if(!instance.isNeedToRetest()){
+            if(!instance.isNeedToRetest() || instance.getClassName().contains("$")){
                 excludedTests.add(instance.getClassName());
             }
         }
