@@ -15,7 +15,7 @@ public class CheckSumHandler {
     private HashSet<String> dangerousClass;
 
     public CheckSumHandler(String checkSumFileName, boolean isTest) {
-        this.checkSumFileName = checkSumFileName;
+        this.checkSumFileName = "myChecksum/" + checkSumFileName;
         this.isTest = isTest;
         oldMap = new HashMap<>();
         newMap = new HashMap<>();

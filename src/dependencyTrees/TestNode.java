@@ -45,7 +45,7 @@ public class TestNode {
             else if (testNode != null) {
                 String dependencyName = jDepsLine.split("\\s+")[1];
                 if (dependencyName.startsWith(PackageHandler.getTestPackageName())) {
-                    if (jDepsLine.endsWith("not found")) {
+                    if (jDepsLine.endsWith("not found") || jDepsLine.endsWith("classes")) {
                         // Determine if this is a class dependency or a test dependency
                         // Note: only class dependencies end with "not found"
                         testNode.dependencies.add(ClassNode.instances.get(dependencyName));
